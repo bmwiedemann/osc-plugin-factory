@@ -44,6 +44,7 @@ llvm7: 1197775
 llvm9: 1197776
 lockdev: 1197784
 lsscsi: 1197785
+mariadb: 1198200
 monitoring-plugins: 1197786
 netty3: 1197787
 nfs-utils: 1197788
@@ -74,6 +75,7 @@ python-argcomplete: 1197833
 python-chardet: 1197834
 python-cheroot: 1197835
 python-dogpile.cache: 1197836
+python-dulwich: 1198201
 python-evtx: 1197837
 python-google-auth: 1197838
 python-google-auth-httplib2: 1197839
@@ -87,6 +89,7 @@ python-python3-saml: 1197846
 python-tox: 1197847
 python-uamqp: 1197848
 python-warlock: 1197849
+rabbitmq-c: 1198202
 rebootmgr: 1197850
 reiserfs: 1197851
 ruby2.5: 1197906
