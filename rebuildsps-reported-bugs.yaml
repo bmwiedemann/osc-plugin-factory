@@ -6,11 +6,14 @@ build: 1197707
 ckermit: 1197708
 cni: 1197709
 container-diff: 1197710
+containerized-data-importer: 1198791
 csync: 1197711
 deja-dup: 1197712
+dovecot23: 1199158
 dvd+rw-tools: 1197713
 emacs-apel: 1197714
 fio: 1197715
+gawk: 1199462
 gcc8: 1197716
 gimp-help: 1197717
 glibc: 1197718
@@ -27,6 +30,7 @@ jeos-licenses: 1197735
 jfsutils: 1197740
 kdumpid: 1197741
 leveldb: 1197742
+libbluray: 1199463
 libcbor: 1197743
 libhangul: 1197744
 libkkc: 1197766
@@ -34,6 +38,7 @@ liblangtag: 1197767
 libnss_nis: 1197768
 libosinfo: 1197769
 libpfm: 1197770
+libphonenumber: 1199159
 libpsl: 1197771
 libqt5-qtdeclarative: 1197992
 libreiserfs: 1183792
@@ -46,6 +51,7 @@ lockdev: 1197784
 lsscsi: 1197785
 mariadb: 1198200
 monitoring-plugins: 1197786
+netty-tcnative: 1198792
 netty3: 1197787
 nfs-utils: 1197788
 nut: 1197789
@@ -83,6 +89,7 @@ python-google-cloud-storage: 1197840
 python-google-resumable-media: 1197841
 python-html5lib: 1197842
 python-monascaclient: 1197843
+python-psutil: 1198304
 python-pyOpenSSL: 1197844
 python-pyfakefs: 1197845
 python-python3-saml: 1197846
@@ -95,6 +102,7 @@ reiserfs: 1197851
 ruby2.5: 1197906
 rzsz: 1197852
 sanlock: 1197853
+sccache: 1199464
 sgi-bitmap-fonts: 1197854
 sharutils: 1197855
 shim: 1197856
@@ -102,6 +110,8 @@ smp_utils: 1197857
 systemd: 1197858
 tcpd: 1183802
 termcap: 1197859
+terraform-provider-aws: 1199160
+texlive-specs-s: 1198793
 tgt: 1197860
 v4l-utils: 1197861
 vulkan: 1197862
