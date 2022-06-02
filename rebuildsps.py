@@ -143,6 +143,8 @@ if __name__ == '__main__':
         # special case for whatever reason
         if owner == 'lrupp@suse.com':
             owner = 'lars.vogdt@suse.com'
+        if owner == 'openssl-maintainers@suse.de':
+            owner = 'pmonrealgonzalez@suse.com'
         if counter >= int(args.max_bugs):
             print(f"Would file a bug for {owner} about {package}:{examples}")
             continue

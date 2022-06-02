@@ -1,6 +1,7 @@
 HANA-Firewall: 1197697
 MozillaFirefox: 1197698
 aws-iam-authenticator: 1197703
+aws-nitro-enclaves-cli: 1200151
 beignet: 1197706
 build: 1197707
 ckermit: 1197708
@@ -41,6 +42,7 @@ libpfm: 1197770
 libphonenumber: 1199159
 libpsl: 1197771
 libqt5-qtdeclarative: 1197992
+libqt5-qttools: 1200152
 libreiserfs: 1183792
 libxshmfence: 1197772
 llvm11: 1197773
@@ -57,6 +59,8 @@ nfs-utils: 1197788
 nut: 1197789
 oath-toolkit: 1197790
 ocl-icd: 1197791
+openssl-1_1: 1200153
+openssl-3: 1200154
 openwsman: 1197792
 oprofile: 1197793
 pam: 1197794
