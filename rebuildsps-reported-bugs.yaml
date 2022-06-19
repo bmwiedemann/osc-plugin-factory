@@ -4,6 +4,7 @@ aws-iam-authenticator: 1197703
 aws-nitro-enclaves-cli: 1200151
 beignet: 1197706
 build: 1197707
+cheese: 1200632
 ckermit: 1197708
 cni: 1197709
 container-diff: 1197710
@@ -18,7 +19,12 @@ gawk: 1199462
 gcc8: 1197716
 gimp-help: 1197717
 glibc: 1197718
+gnome-contacts: 1200633
+gnome-control-center: 1200634
+gnome-initial-setup: 1200635
+grilo-plugins: 1200636
 grpc: 1197726
+gstreamer-plugins-bad: 1200637
 gupnp-igd: 1197727
 helm-mirror: 1197728
 icewm: 1197729
@@ -44,6 +50,7 @@ libpsl: 1197771
 libqt5-qtdeclarative: 1197992
 libqt5-qttools: 1200152
 libreiserfs: 1183792
+libxcam: 1200638
 libxshmfence: 1197772
 llvm11: 1197773
 llvm5: 1197774
@@ -59,7 +66,7 @@ nfs-utils: 1197788
 nut: 1197789
 oath-toolkit: 1197790
 ocl-icd: 1197791
-openssl-1_1: 1200153
+openssl-1_1: 1185637
 openssl-3: 1200154
 openwsman: 1197792
 oprofile: 1197793
@@ -68,6 +75,7 @@ pam-modules: 1197795
 pcp: 1197796
 perl-DBD-Pg: 1197797
 perl-XML-LibXSLT: 1197798
+pipewire: 1200639
 ppp: 1197799
 python-Flask: 1197800
 python-Flask-Babel: 1197822
@@ -101,6 +109,7 @@ python-tox: 1197847
 python-uamqp: 1197848
 python-warlock: 1197849
 rabbitmq-c: 1198202
+rav1e: 1200640
 rebootmgr: 1197850
 reiserfs: 1197851
 ruby2.5: 1197906
