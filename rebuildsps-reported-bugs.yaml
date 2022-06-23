@@ -60,6 +60,7 @@ lockdev: 1197784
 lsscsi: 1197785
 mariadb: 1198200
 monitoring-plugins: 1197786
+neon: 1200856
 netty-tcnative: 1198792
 netty3: 1197787
 nfs-utils: 1197788
