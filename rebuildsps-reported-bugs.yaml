@@ -103,6 +103,7 @@ python-google-cloud-storage: 1197840
 python-google-resumable-media: 1197841
 python-html5lib: 1197842
 python-monascaclient: 1197843
+python-paramiko: 1201575
 python-psutil: 1198304
 python-pyOpenSSL: 1197844
 python-pyfakefs: 1197845
