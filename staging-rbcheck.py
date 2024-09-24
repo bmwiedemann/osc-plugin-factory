@@ -19,93 +19,30 @@ from osclib.core import (builddepinfo, depends_on, duplicated_binaries_in_repo,
                          fileinfo_ext_all, repository_arch_state,
                          repository_path_expand, target_archs)
 
-from osclib.repochecks import installcheck, mirror
+from osclib.repochecks import rbcheck, mirror
 from osclib.stagingapi import StagingAPI
 from osclib.memoize import memoize
 
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 CheckResult = namedtuple('CheckResult', ('success', 'comment'))
 
+repositories = list("rb_future1y", "rb_j1")
+
 
 class RBChecker(object):
     def __init__(self, api, config):
         self.api = api
-        self.logger = logging.getLogger('InstallChecker')
+        self.logger = logging.getLogger('RBChecker')
         self.commentapi = CommentAPI(api.apiurl)
 
-        self.arch_whitelist = config.get('repo_checker-arch-whitelist')
+        self.arch_whitelist = config.get('rb_checker-arch-whitelist')
         if self.arch_whitelist:
             self.arch_whitelist = set(self.arch_whitelist.split(' '))
 
-        self.ring_whitelist = set(config.get('repo_checker-binary-whitelist-ring', '').split(' '))
+        self.ring_whitelist = set(config.get('rb_checker-binary-whitelist-ring', '').split(' '))
 
-        self.cycle_packages = config.get('repo_checker-allowed-in-cycles')
-        self.calculate_allowed_cycles()
-
-        self.ignore_duplicated = set(config.get('installcheck-ignore-duplicated-binaries', '').split(' '))
-        self.ignore_conflicts = set(config.get('installcheck-ignore-conflicts', '').split(' '))
-        self.ignore_deletes = str2bool(config.get('installcheck-ignore-deletes', 'False'))
-
-    def check_required_by(self, fileinfo, provides, requiredby, built_binaries, comments):
-        if requiredby.get('name') in built_binaries:
-            return True
-
-        result = True
-
-        # In some cases (boolean deps?) it's possible that fileinfo_ext for A
-        # shows that A provides cap needed by B, but fileinfo_ext for B does
-        # not list cap or A at all... In that case better error out and ask for
-        # human intervention.
-        dep_found = False
-        # In case the dep was not found, give a hint what OBS might have meant.
-        possible_dep = None
-
-        # extract >= and the like
-        provide = provides.get('dep')
-        provide = provide.split(' ')[0]
-        comments.append('{} provides {} required by {}'.format(
-            fileinfo.find('name').text, provide, requiredby.get('name')))
-        url = api.makeurl(['build', api.project, api.cmain_repo, 'x86_64', '_repository', requiredby.get('name') + '.rpm'],
-                          {'view': 'fileinfo_ext'})
-        reverse_fileinfo = ET.parse(osc.core.http_GET(url)).getroot()
-
-        for require in reverse_fileinfo.findall('requires_ext'):
-            # extract >= and the like here too
-            dep = require.get('dep').split(' ')[0]
-            if dep != provide:
-                if provide in require.get('dep'):
-                    possible_dep = require.get('dep')
-                continue
-            dep_found = True
-            # Whether this is provided by something being deleted
-            provided_found = False
-            # Whether this is provided by something not being deleted
-            alternative_found = False
-            for provided_by in require.findall('providedby'):
-                if provided_by.get('name') in built_binaries:
-                    provided_found = True
-                else:
-                    comments.append(f"  also provided by {provided_by.get('name')} -> ignoring")
-                    alternative_found = True
-
-            if not alternative_found:
-                result = False
-
-            if not provided_found:
-                comments.append("  OBS doesn't see this in the reverse resolution though. Not sure what to do.")
-                result = False
-
-        if not dep_found:
-            comments.append("  OBS doesn't see this dep in reverse though. Not sure what to do.")
-            if possible_dep is not None:
-                comments.append(f'  Might be required by {possible_dep}')
-            return False
-
-        if result:
-            return True
-        else:
-            comments.append(f'Error: missing alternative provides for {provide}')
-            return False
+        self.ignore_unreproducible = set(config.get('rbcheck-ignore-unreproducible-binaries', '').split(' '))
+        self.ignore_conflicts = set(config.get('rbcheck-ignore-conflicts', '').split(' ')) # TODO: drop
 
     @memoize(session=True)
     def pkg_with_multibuild_flavors(self, package):
@@ -117,10 +54,9 @@ class RBChecker(object):
 
         return ret
 
-
     def packages_to_ignore(self, project):
         comments = self.commentapi.get_comments(project_name=project)
-        ignore_re = re.compile(r'^installcheck: ignore (?P<args>.*)$', re.MULTILINE)
+        ignore_re = re.compile(r'^rbcheck: ignore (?P<args>.*)$', re.MULTILINE)
 
         # the last wins, for now we don't care who said it
         args = []
@@ -134,6 +70,9 @@ class RBChecker(object):
         return set(args)
 
     def staging(self, project, force=False):
+        """project is e.g. openSUSE:Factory:Staging:adi:65:reproducible
+        force means to re-check a previously checked project
+        """
         api = self.api
 
         repository = self.api.cmain_repo
@@ -159,7 +98,7 @@ class RBChecker(object):
             url = self.report_url(project, repository, arch, buildid)
             try:
                 root = ET.parse(osc.core.http_GET(url)).getroot()
-                check = root.find('check[@name="installcheck"]/state')
+                check = root.find('check[@name="rbcheck"]/state')
                 if check is not None and check.text != 'pending':
                     self.logger.info(f'{pra} already "{check.text}", ignoring')
                 else:
@@ -180,12 +119,6 @@ class RBChecker(object):
         if status is None:
             self.logger.error(f'no project status for {project}')
             return False
-
-        # collect packages to be deleted
-        to_delete = set()
-        for req in status.findall('staged_requests/request'):
-            if req.get('type') == 'delete':
-                to_delete |= self.pkg_with_multibuild_flavors(req.get('package'))
 
         for arch in architectures:
             # hit the first repository in the target project (if existant)
@@ -247,11 +180,11 @@ class RBChecker(object):
 
     def upload_failure(self, project, comment):
         print(project, '\n'.join(comment))
-        url = self.api.makeurl(['source', 'home:repo-checker', 'reports', project])
+        url = self.api.makeurl(['source', 'home:rb-checker', 'reports', project])
         osc.core.http_PUT(url, data='\n'.join(comment))
 
         url = self.api.apiurl.replace('api.', 'build.')
-        return f'{url}/package/view_file/home:repo-checker/reports/{project}'
+        return f'{url}/package/view_file/home:rb-checker/reports/{project}'
 
     def report_state(self, state, report_url, project, repository, buildids):
         architectures = self.target_archs(project, repository)
@@ -261,7 +194,7 @@ class RBChecker(object):
     def gocd_url(self):
         if not os.environ.get('GO_SERVER_URL'):
             # placeholder :)
-            return 'http://stephan.kulow.org/'
+            return 'http://bernhard.bmwiedemann.de/'
         report_url = os.environ.get('GO_SERVER_URL').replace(':8154', '')
         return report_url + '/tab/build/detail/{}/{}/{}/{}/{}#tab-console'.format(os.environ.get('GO_PIPELINE_NAME'),
                                                                                   os.environ.get('GO_PIPELINE_COUNTER'),
@@ -283,7 +216,7 @@ class RBChecker(object):
 
     def report_pipeline(self, state, report_url, project, repository, architecture, buildid):
         url = self.report_url(project, repository, architecture, buildid)
-        name = 'installcheck'
+        name = 'rbcheck'
         xml = self.check_xml(report_url, state, name)
         try:
             osc.core.http_POST(url, data=xml)
@@ -314,19 +247,13 @@ class RBChecker(object):
 
     def install_check(self, directories, arch, whitelist, ignored_conflicts):
         self.logger.info(f"install check: start (whitelist:{','.join(whitelist)})")
-        parts = installcheck(directories, arch, whitelist, ignored_conflicts)
+        parts = rbcheck(directories, arch, whitelist, ignored_conflicts)
         if len(parts):
             header = f'### [install check & file conflicts for {arch}]'
             return CheckResult(False, header + '\n\n' + ('\n' + ('-' * 80) + '\n\n').join(parts))
 
         self.logger.info('install check: passed')
         return CheckResult(True, None)
-
-    def calculate_allowed_cycles(self):
-        self.allowed_cycles = []
-        if self.cycle_packages:
-            for comma_list in self.cycle_packages.split(';'):
-                self.allowed_cycles.append(comma_list.split(','))
 
     def cycle_check(self, project, repository, arch):
         self.logger.info(f'cycle check: start {project}/{repository}/{arch}')
@@ -356,7 +283,7 @@ class RBChecker(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Do an installcheck on staging project')
+        description='Do an RB-Check for reproducible builds on staging project')
     parser.add_argument('-s', '--staging', type=str, default=None,
                         help='staging project')
     parser.add_argument('-p', '--project', type=str, default='openSUSE:Factory',
@@ -373,7 +300,7 @@ if __name__ == '__main__':
     apiurl = osc.conf.config['apiurl']
     config = Config.get(apiurl, args.project)
     api = StagingAPI(apiurl, args.project)
-    staging_report = InstallChecker(api, config)
+    staging_report = RBChecker(api, config)
 
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
