@@ -77,7 +77,7 @@ function checkbranch
 {
   osc r --format='%(status)s' "$newprj" "$srcpkg" > .tmp
   grep -q -e finished -e scheduled -e blocked -e building -e signing -e dispatching .tmp && return # skip to wait some more
-  if grep -v succeeded .tmp ; then
+  if grep -v -e succeeded -e excluded .tmp ; then
     echo "found unhandled status in $newprj => FIXME $BASH_SOURCE"
     return
   fi
