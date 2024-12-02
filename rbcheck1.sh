@@ -41,7 +41,7 @@ function setuplink
 </project>
 EOF
   echo "$newprj" >> .cleanuplater
-  echo "osc meta prj -F .tmp $newprj"
+  $dry osc meta prj -F .tmp "$newprj" || exit 11
   cat > .tmp <<EOF
 %if "%_repository" == "rb_future1y"
 Required: reproducible-faketools-futurepost
@@ -58,15 +58,15 @@ Release: 1.1
 Macros:
 %distribution reproducible
 EOF
-  osc meta prjconf -F .tmp $newprj
-  echo osc linkpac -r "$rev" "$srcprj" "$srcpkg" "$newprj"
+  $dry osc meta prjconf -F .tmp "$newprj" || exit 12
+  $dry osc linkpac -r "$rev" "$srcprj" "$srcpkg" "$newprj" || exit 13
 }
 
 
 function checkbranch
 {
   osc r --format='%(status)s' "$newprj" "$srcpkg" > .tmp
-  grep -q -e finished -e scheduled -e blocked -e signing -e dispatching .tmp && return # skip to wait some more
+  grep -q -e finished -e scheduled -e blocked -e building -e signing -e dispatching .tmp && return # skip to wait some more
   if grep -v succeeded .tmp ; then
     echo "found unhandled status in $newprj => FIXME $BASH_SOURCE"
     return
