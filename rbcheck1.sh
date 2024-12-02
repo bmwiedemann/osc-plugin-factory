@@ -106,6 +106,7 @@ for pkg in $pkgs ; do
   branchexists=$(if osc ls $newprj >/dev/null 2>&1 ; then echo true ; else echo false ; fi )
   reportexists=$(if osc ls $report >/dev/null 2>&1 ; then echo true ; else echo false ; fi )
   if $reportexists ; then # we are done ; move on to next pkg
+      $branchexists && cleanup "$newprj"
       continue
   fi
   if ! $branchexists ; then
