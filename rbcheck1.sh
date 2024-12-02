@@ -100,6 +100,7 @@ pkgs=$(osc ls $prj | grep -v :)
 for pkg in $pkgs ; do
   osc cat -u "$prj" "$pkg" _link > .tmp || continue
   rev=$(perl -ne 'm/rev="([a-f0-9]+)"/ && print $1' .tmp)
+  if [[ -z "$rev" ]] ; then echo "skipping $pkg - no rev found"; continue ; fi
   srcprj=$(perl -ne 'm/project="([^"]+)"/ && print $1' .tmp)
   srcpkg=$(perl -ne 'm/package="([^"]+)"/ && print $1' .tmp)
   newprj=$rbbaseprj:rebuild:$srcpkg-$rev
