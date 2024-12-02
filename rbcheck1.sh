@@ -14,6 +14,7 @@ function cleanup
 
 function setuplink
 {
+  echo "setting up test for $newprj $pkg"
   cat > .tmp <<EOF
 <project name="$newprj">
   <title/>
