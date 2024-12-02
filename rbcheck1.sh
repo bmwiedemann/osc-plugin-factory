@@ -88,6 +88,7 @@ function checkbranch
   osc api -X PUT --file .tmp "/source/$report"
   #TODO email Bernhard about unreproducible submissions
   if [[ $unreproducible = 1 ]] ; then
+      echo "$pkg is unreproducible -> sending email"
       echo -e "unreproducible $prj $pkg\nhttps://build.opensuse.org/package/show/$newprj/$srcpkg" |
         mailx -a .tmp -s "unreproducible package $pkg" rbcheckerbmw@lsmod.de
   fi
