@@ -80,7 +80,7 @@ function checkbranch
   unreproducible=$?
 
   # FIXME report status
-  echo $unreproducible $prj $pkg > .tmp # 0=reproducible 1=unreproducible
+  echo -e "v1 $unreproducible\n$prj $pkg\n" https://build.opensuse.org/package/show/$newprj/$srcpkg > .tmp # 0=reproducible 1=unreproducible
   for repo in $repos ; do
       cat .tmp.$repo >>.tmp
       rm .tmp.$repo
