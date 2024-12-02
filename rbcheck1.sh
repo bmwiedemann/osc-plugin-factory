@@ -96,7 +96,7 @@ function checkbranch
 }
 
 
-pkgs=$(osc ls $prj)
+pkgs=$(osc ls $prj | grep -v :)
 for pkg in $pkgs ; do
   osc cat -u "$prj" "$pkg" _link > .tmp
   rev=$(perl -ne 'm/rev="([a-f0-9]+)"/ && print $1' .tmp)
