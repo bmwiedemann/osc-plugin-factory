@@ -5,6 +5,13 @@ rbbaseprj=home:rb-checker
 repos="rb_future1y rb_j1"
 
 
+# test if an API endpoint returns success or an error
+function test_api_exists
+{
+    curl -s --fail-with-body https://api.opensuse.org/$1 >/dev/null 2>&1
+}
+
+
 function cleanup
 {
     local prj=$1
@@ -109,8 +116,8 @@ for pkg in $pkgs ; do
   srcpkg=$(perl -ne 'm/package="([^"]+)"/ && print $1' .tmp)
   newprj=$rbbaseprj:rebuild:$srcpkg-$rev
   report=$rbbaseprj/reports/$srcpkg-$rev
-  branchexists=$(if osc ls $newprj >/dev/null 2>&1 ; then echo true ; else echo false ; fi )
-  reportexists=$(if osc ls $report >/dev/null 2>&1 ; then echo true ; else echo false ; fi )
+  branchexists=$(if test_api_exists /public/source/$newprj ; then echo true ; else echo false ; fi )
+  reportexists=$(if test_api_exists /public/source/$report ; then echo true ; else echo false ; fi )
   if $reportexists ; then # we are done ; move on to next pkg
       $branchexists && cleanup "$newprj"
       continue
