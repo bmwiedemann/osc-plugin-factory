@@ -30,11 +30,13 @@ function setuplink
   </debuginfo>
   <repository name="rb_j1" linkedbuild="all">
     <path project="openSUSE:Factory:Staging" repository="standard"/>
+    <path project="$prj" repository="standard"/>
     <path project="home:bmwiedemann:reproducible" repository="openSUSE_Tumbleweed"/>
     <arch>x86_64</arch>
   </repository>
   <repository name="rb_future1y" linkedbuild="all">
     <path project="openSUSE:Factory:Staging" repository="standard"/>
+    <path project="$prj" repository="standard"/>
     <path project="home:bmwiedemann:reproducible" repository="openSUSE_Tumbleweed"/>
     <arch>x86_64</arch>
   </repository>
