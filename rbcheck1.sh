@@ -2,6 +2,7 @@
 
 prj=${1:-openSUSE:Factory:Staging:adi:9}
 rbbaseprj=home:rb-checker
+notespkg=$rbbaseprj/notes
 repos="rb_future1y rb_j1"
 
 
@@ -99,7 +100,11 @@ function checkbranch
   #TODO email Bernhard about unreproducible submissions
   if [[ $unreproducible = 1 ]] ; then
       echo "$pkg is unreproducible -> sending email"
-      echo -e "unreproducible $prj $pkg\nhttps://build.opensuse.org/package/show/$newprj/$srcpkg" |
+      reason=$(curl -s --fail-with-body https://api.opensuse.org/public/source/$notespkg/$pkg 2>/dev/null)
+      if $? != 0 ; then
+          reason="unknown reason"
+      fi
+      echo -e "unreproducible $prj $pkg\nhttps://build.opensuse.org/package/show/$newprj/$srcpkg\n$reason" |
         mailx -a .tmp -s "unreproducible package $pkg" rbcheckerbmw@lsmod.de
   fi
   #TODO add comment/report/review on SR
