@@ -28,7 +28,6 @@ function setuplink
   <title/>
   <description/>
   <url>/staging_workflows/openSUSE:Factory/staging_projects/$prj</url>
-  <person userid="bmwiedemann" role="maintainer"/>
   <person userid="rb-checker" role="maintainer"/>
   <!--group groupid="factory-staging" role="maintainer"/-->
   <publish>
