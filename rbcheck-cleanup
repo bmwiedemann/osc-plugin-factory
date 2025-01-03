@@ -1,0 +1,2 @@
+#!/bin/sh
+( export accelerate=1; . /home/slowrollbot/code/git/obs/slowroll-tools/tools/osc.sh ; for p in $(cat .cleanuplater.2) ; do echo $p ; time osc_delete "source/$p?force=1" ; done )
