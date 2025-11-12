@@ -16,7 +16,7 @@ function test_api_exists
 function cleanup
 {
     local prj=$1
-    $dry osc rdelete -m drop -r "$prj" | tee -a .cleanup
+    $dry osc rdelete --force -m drop -r "$prj" | tee -a .cleanup
 }
 
 
