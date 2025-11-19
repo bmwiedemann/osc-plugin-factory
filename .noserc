@@ -1,3 +1,0 @@
-[nosetests]
-ignore-files=metrics_release\.py
-ignore-files=docker_.+\.py

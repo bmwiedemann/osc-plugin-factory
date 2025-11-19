@@ -1,4 +1,0 @@
-[flake8]
-exclude = abichecker
-max-line-length = 140
-ignore = W503,W504

@@ -1,6 +1,0 @@
-<services>
-  <service name="recompress">
-    <param name="file">*.tar</param>
-  </service>
-</services>
-

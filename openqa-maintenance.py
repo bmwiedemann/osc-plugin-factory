@@ -1,9 +1,0 @@
-#!/usr/bin/python3
-
-from oqamaint.cli import CommandLineInterface
-
-import sys
-
-if __name__ == "__main__":
-    app = CommandLineInterface()
-    sys.exit(app.main())

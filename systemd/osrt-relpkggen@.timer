@@ -1,7 +1,0 @@
-[Timer]
-OnBootSec=120
-OnCalendar=hourly
-Unit=osrt-relpkggen@.service
-
-[Install]
-WantedBy=timers.target

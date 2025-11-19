@@ -1,3 +1,0 @@
-<collection matches="${nrequests}">
-  ${requests}
-</collection>
