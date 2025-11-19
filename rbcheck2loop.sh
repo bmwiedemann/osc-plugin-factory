@@ -1,4 +1,4 @@
 #!/bin/sh
-while sleep 2m ; do
+while sleep 9m ; do
     time ./rbcheck2.sh
 done
