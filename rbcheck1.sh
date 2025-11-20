@@ -6,13 +6,6 @@ notespkg=$rbbaseprj/notes
 repos="rb_future1y rb_j1"
 
 
-# test if an API endpoint returns success or an error
-function test_api_exists
-{
-    curl -s --fail-with-body https://api.opensuse.org/$1 >/dev/null 2>&1
-}
-
-
 # note: usage of $branchfile assumes that this is always called with $newprj
 function cleanup
 {
@@ -124,8 +117,8 @@ for pkg in $pkgs ; do
   report=$rbbaseprj/reports/$srcpkg-$rev
   reportfile=state/reports/$srcpkg-$rev
   branchfile=state/prj/$newprj
-  branchexists=$(if test -e "$branchfile" || test_api_exists /public/source/$newprj ; then echo true ; else echo false ; fi )
-  reportexists=$(if test -e $reportfile || test_api_exists /public/source/$report ; then echo true ; else echo false ; fi )
+  branchexists=$(if test -e "$branchfile" ; then echo true ; else echo false ; fi )
+  reportexists=$(if test -e $reportfile ; then echo true ; else echo false ; fi )
   if $reportexists ; then # we are done ; move on to next pkg
       $branchexists && cleanup "$newprj"
       continue
