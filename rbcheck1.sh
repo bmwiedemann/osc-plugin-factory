@@ -89,14 +89,14 @@ function checkbranch
   done | sort | uniq -c | perl -ne 'm/^ *[013-9] / && exit 1'
   unreproducible=$?
 
-  # FIXME report status
+  # report status
   echo -e "v1 $unreproducible\n$prj $pkg\n" https://build.opensuse.org/package/show/$newprj/$srcpkg > .tmp # 0=reproducible 1=unreproducible
   for repo in $repos ; do
       cat .tmp.$repo >>.tmp
       rm .tmp.$repo
   done
-  osc api -X PUT --file .tmp "/source/$report"
-  #TODO email Bernhard about unreproducible submissions
+  cp -a .tmp $reportfile
+  # email Bernhard about unreproducible submissions
   if [[ $unreproducible = 1 ]] ; then
       echo "$pkg is unreproducible -> sending email"
       reason=$(curl -s --fail-with-body https://api.opensuse.org/public/source/$notespkg/$pkg 2>/dev/null)
@@ -120,8 +120,9 @@ for pkg in $pkgs ; do
   srcpkg=$(perl -ne 'm/package="([^"]+)"/ && print $1' .tmp)
   newprj=$rbbaseprj:rebuild:$srcpkg-$rev
   report=$rbbaseprj/reports/$srcpkg-$rev
+  reportfile=state/reports/$srcpkg-$rev
   branchexists=$(if test_api_exists /public/source/$newprj ; then echo true ; else echo false ; fi )
-  reportexists=$(if test_api_exists /public/source/$report ; then echo true ; else echo false ; fi )
+  reportexists=$(if test -e $reportfile || test_api_exists /public/source/$report ; then echo true ; else echo false ; fi )
   if $reportexists ; then # we are done ; move on to next pkg
       $branchexists && cleanup "$newprj"
       continue
