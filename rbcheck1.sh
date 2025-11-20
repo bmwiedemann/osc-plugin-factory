@@ -114,7 +114,6 @@ for pkg in $pkgs ; do
   srcprj=$(perl -ne 'm/project="([^"]+)"/ && print $1' .tmp)
   srcpkg=$(perl -ne 'm/package="([^"]+)"/ && print $1' .tmp)
   newprj=$rbbaseprj:rebuild:$srcpkg-$rev
-  report=$rbbaseprj/reports/$srcpkg-$rev
   reportfile=state/reports/$srcpkg-$rev
   branchfile=state/prj/$newprj
   branchexists=$(if test -e "$branchfile" ; then echo true ; else echo false ; fi )
