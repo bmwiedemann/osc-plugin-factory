@@ -13,10 +13,12 @@ function test_api_exists
 }
 
 
+# note: usage of $branchfile assumes that this is always called with $newprj
 function cleanup
 {
     local prj=$1
-    $dry osc rdelete --force -m drop -r "$prj" | tee -a .cleanup
+    $dry osc rdelete --force -m drop -r "$prj"
+    $dry rm -f "$branchfile"
 }
 
 
@@ -50,7 +52,7 @@ function setuplink
   </repository>
 </project>
 EOF
-  echo "$newprj" >> .cleanuplater
+  touch "$branchfile"
   $dry osc meta prj -F .tmp "$newprj" || exit 11
   cat > .tmp <<EOF
 %if "%_repository" == "rb_future1y"
@@ -121,7 +123,8 @@ for pkg in $pkgs ; do
   newprj=$rbbaseprj:rebuild:$srcpkg-$rev
   report=$rbbaseprj/reports/$srcpkg-$rev
   reportfile=state/reports/$srcpkg-$rev
-  branchexists=$(if test_api_exists /public/source/$newprj ; then echo true ; else echo false ; fi )
+  branchfile=state/prj/$newprj
+  branchexists=$(if test -e "$branchfile" || test_api_exists /public/source/$newprj ; then echo true ; else echo false ; fi )
   reportexists=$(if test -e $reportfile || test_api_exists /public/source/$report ; then echo true ; else echo false ; fi )
   if $reportexists ; then # we are done ; move on to next pkg
       $branchexists && cleanup "$newprj"
@@ -130,6 +133,7 @@ for pkg in $pkgs ; do
   if ! $branchexists ; then
       setuplink
   else
+      touch "$branchfile"
       checkbranch
   fi
 done
