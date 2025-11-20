@@ -94,7 +94,7 @@ function checkbranch
   # email Bernhard about unreproducible submissions
   if [[ $unreproducible = 1 ]] ; then
       echo "$pkg is unreproducible -> sending email"
-      reason=$(curl -s --fail-with-body https://api.opensuse.org/public/source/$notespkg/$pkg 2>/dev/null)
+      reason=$(osc cat -u $notespkg/$pkg 2>/dev/null)
       if $? != 0 ; then
           reason="unknown reason"
       fi
